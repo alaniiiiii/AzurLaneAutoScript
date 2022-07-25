@@ -11,7 +11,6 @@ from module.map.map import Map
 from module.os.assets import FLEET_EMP_DEBUFF
 from module.os.fleet import OSFleet
 from module.os.globe_camera import GlobeCamera
-from module.ui.assets import OS_CHECK
 from module.ui.ui import page_os
 
 FLEET_LOW_RESOLVE = Button(
@@ -448,6 +447,11 @@ class OSMap(OSFleet, Map, GlobeCamera):
             self.view.show()
 
             grid = self.convert_radar_to_local(grid)
+            if grid.is_scanning_device and \
+                    self.config.OpsiGeneral_DoRandomMapEvent == 'skip_scanning_device':
+                logger.info('Skip scanning device in hazard 1 leveling')
+                return False
+
             self.device.click(grid)
             result = self.wait_until_walk_stable(drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
             if 'akashi' in result:
@@ -544,18 +548,22 @@ class OSMap(OSFleet, Map, GlobeCamera):
                 self._solved_map_event.add('is_akashi')
                 return True
 
-        grids = self.view.select(is_scanning_device=True)
-        if 'is_scanning_device' not in self._solved_map_event and grids and grids[0].is_scanning_device:
-            grid = grids[0]
-            logger.info(f'Found scanning device on {grid}')
-            self.device.click(grid)
-            result = self.wait_until_walk_stable(drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
-            self.os_auto_search_run(drop=drop)
-            if 'event' in result:
-                self._solved_map_event.add('is_scanning_device')
-                return True
-            else:
-                return False
+        if self.config.OpsiGeneral_DoRandomMapEvent == 'skip_scanning_device':
+            logger.info('Skip find scanning device in hazard 1 leveling')
+        else:
+            grids = self.view.select(is_scanning_device=True)
+            if 'is_scanning_device' not in self._solved_map_event and grids and grids[0].is_scanning_device:
+                grid = grids[0]
+                logger.info(f'Found scanning device on {grid}')
+                self.device.click(grid)
+                result = self.wait_until_walk_stable(drop=drop, walk_out_of_step=False,
+                                                     confirm_timer=Timer(1.5, count=4))
+                self.os_auto_search_run(drop=drop)
+                if 'event' in result:
+                    self._solved_map_event.add('is_scanning_device')
+                    return True
+                else:
+                    return False
 
         grids = self.view.select(is_logging_tower=True)
         if 'is_logging_tower' not in self._solved_map_event and grids and grids[0].is_logging_tower:

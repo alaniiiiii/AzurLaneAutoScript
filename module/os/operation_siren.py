@@ -177,7 +177,10 @@ class OperationSiren(OSMap):
 
     def os_hazard1_leveling(self):
         logger.hr('OS hazard 1 leveling', level=1)
-
+        self.config.override(
+            OpsiGeneral_AkashiShopFilter='ActionPoint',
+            OpsiGeneral_DoRandomMapEvent='skip_scanning_device'
+        )
         while 1:
             self.config.OS_ACTION_POINT_PRESERVE = self.config.OpsiHazard1Leveling_ActionPointPreserve
             if self.config.OpsiAshBeacon_AshAttack \
@@ -194,15 +197,18 @@ class OperationSiren(OSMap):
                             .format(self.config.OpsiHazard1Leveling_YellowCoinPreserve))
                 self.config.task_delay(server_update=True)
 
-            zone = self.name_to_zone(44)
-            self.globe_goto(zone)
+            zones = self.zone_select(hazard_level=1) \
+                .delete(SelectedGrids([self.zone])) \
+                .delete(SelectedGrids(self.zones.select(is_port=True)))
+
+            logger.hr(f'OS hazard 1 leveling, zone_id={zones[0].zone_id}', level=1)
+            self.globe_goto(zones[0])
             self.fleet_set(self.config.OpsiFleet_Fleet)
             self.os_order_execute(
                 recon_scan=False,
                 submarine_call=self.config.OpsiFleet_Submarine)
             self.run_auto_search()
-            if not self.handle_after_auto_search():
-                self.globe_goto(self.zone_nearest_azur_port(zone=zone))
+            self.handle_after_auto_search()
             self.config.check_task_switch()
 
     def _os_explore_task_delay(self):
