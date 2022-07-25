@@ -218,6 +218,10 @@
       "name": "短貓相接",
       "help": ""
     },
+    "OpsiHazard1Leveling": {
+      "name": "Task.OpsiHazard1Leveling.name",
+      "help": "Task.OpsiHazard1Leveling.help"
+    },
     "Daemon": {
       "name": "半自動點擊",
       "help": ""
@@ -1927,7 +1931,7 @@
     },
     "ActionPointPreserve": {
       "name": "保留 X 點行動力",
-      "help": "行動力低於 X 後停止，自動打開行動力箱子，X 包含箱子中的行動力，建議保留 500 點行動力\n這個值將在大世界重置前3天自動減少至200點，並在最後一天自動減少至0點"
+      "help": "行動力低於 X 後停止，自動打開行動力箱子，X 包含箱子中的行動力，建議保留 1000 點行動力\n這個值將在大世界重置前3天自動減少至200點，並在最後一天自動減少至0點"
     },
     "HazardLevel": {
       "name": "侵蝕等級",
@@ -1941,6 +1945,20 @@
     "TargetZone": {
       "name": "指定海域",
       "help": "僅出擊指定的海域，可以用來獲取大世界成就星星\n自動更新的數值，填0可重置進度，重置後自動跳過已開荒的海域\n支持海域ID、國服/國際服/日服/台服海域名稱，例如 \"51\", \"NA海域東南E\", \"NA Ocean SE Sector E\"\n填入默認值0，或者刪除數值即可取消指定"
+    }
+  },
+  "OpsiHazard1Leveling": {
+    "_info": {
+      "name": "OpsiHazard1Leveling._info.name",
+      "help": "OpsiHazard1Leveling._info.help"
+    },
+    "YellowCoinPreserve": {
+      "name": "OpsiHazard1Leveling.YellowCoinPreserve.name",
+      "help": "OpsiHazard1Leveling.YellowCoinPreserve.help"
+    },
+    "ActionPointPreserve": {
+      "name": "OpsiHazard1Leveling.ActionPointPreserve.name",
+      "help": "OpsiHazard1Leveling.ActionPointPreserve.help"
     }
   },
   "Daemon": {

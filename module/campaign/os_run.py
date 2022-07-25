@@ -55,6 +55,13 @@ class OSCampaignRun(OSMapOperation):
                 logger.info('Just less than 1 day to OpSi reset, delay 2.5 hours')
                 self.config.task_delay(minute=150, server_update=True)
 
+    def opsi_hazard1_leveling(self):
+        self.load_campaign()
+        try:
+            self.campaign.os_hazard1_leveling()
+        except ActionPointLimit:
+            self.config.task_delay(server_update=True)
+
     def opsi_obscure(self):
         self.load_campaign()
         try:

@@ -9,6 +9,7 @@ from module.map.map_grids import SelectedGrids
 from module.os.fleet import BossFleet
 from module.os.globe_operation import OSExploreError
 from module.os.map import OSMap
+from module.os_handler.shop import OCR_SHOP_YELLOW_COINS
 
 
 class OperationSiren(OSMap):
@@ -130,9 +131,9 @@ class OperationSiren(OSMap):
         Recommend 3 or 5 for higher meowfficer searching point per action points ratio.
         """
         logger.hr(f'OS meowfficer farming, hazard_level={self.config.OpsiMeowfficerFarming_HazardLevel}', level=1)
-        self.action_point_limit_override()
+        preserve = min(self.get_action_point_limit(), self.config.OpsiMeowfficerFarming_ActionPointPreserve)
         while 1:
-            self.config.OS_ACTION_POINT_PRESERVE = self.config.OpsiMeowfficerFarming_ActionPointPreserve
+            self.config.OS_ACTION_POINT_PRESERVE = preserve
             if self.config.OpsiAshBeacon_AshAttack \
                     and not self._ash_fully_collected \
                     and self.config.OpsiAshBeacon_EnsureFullyCollected:
@@ -173,6 +174,36 @@ class OperationSiren(OSMap):
                 self.run_auto_search()
                 self.handle_after_auto_search()
                 self.config.check_task_switch()
+
+    def os_hazard1_leveling(self):
+        logger.hr('OS hazard 1 leveling', level=1)
+
+        while 1:
+            self.config.OS_ACTION_POINT_PRESERVE = self.config.OpsiHazard1Leveling_ActionPointPreserve
+            if self.config.OpsiAshBeacon_AshAttack \
+                    and not self._ash_fully_collected \
+                    and self.config.OpsiAshBeacon_EnsureFullyCollected:
+                logger.info('Ash beacon not fully collected, ignore action point limit temporarily')
+                self.config.OS_ACTION_POINT_PRESERVE = 0
+            logger.attr('OS_ACTION_POINT_PRESERVE', self.config.OS_ACTION_POINT_PRESERVE)
+
+            yellow_coins = OCR_SHOP_YELLOW_COINS.ocr(self.device.image)
+            logger.attr('Yellow coins', yellow_coins)
+            if yellow_coins < self.config.OpsiHazard1Leveling_YellowCoinPreserve:
+                logger.info('Reach the limit of yellow coins, preserve={}'
+                            .format(self.config.OpsiHazard1Leveling_YellowCoinPreserve))
+                self.config.task_delay(server_update=True)
+
+            zone = self.name_to_zone(44)
+            self.globe_goto(zone)
+            self.fleet_set(self.config.OpsiFleet_Fleet)
+            self.os_order_execute(
+                recon_scan=False,
+                submarine_call=self.config.OpsiFleet_Submarine)
+            self.run_auto_search()
+            if not self.handle_after_auto_search():
+                self.globe_goto(self.zone_nearest_azur_port(zone=zone))
+            self.config.check_task_switch()
 
     def _os_explore_task_delay(self):
         """

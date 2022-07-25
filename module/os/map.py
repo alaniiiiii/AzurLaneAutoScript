@@ -1,3 +1,4 @@
+from sys import maxsize
 import inflection
 
 from module.base.button import Button
@@ -312,32 +313,26 @@ class OSMap(OSFleet, Map, GlobeCamera):
         logger.warning('Failed to solve EMP debuff after 5 trial, assume solved')
         return True
 
-    def action_point_limit_override(self):
+    def get_action_point_limit(self):
         """
         Override user config at the end of every month.
         To consume all action points without manual configuration.
 
         Returns:
-            bool: If overrode
+            int: ActionPointPreserve
         """
         remain = get_os_reset_remain()
         if remain <= 0:
             logger.info('Just less than 1 day to OpSi reset, '
-                        'set OpsiMeowfficerFarming.ActionPointPreserve to 0 temporarily')
-            self.config.override(OpsiMeowfficerFarming_ActionPointPreserve=0)
-            return True
+                        'set ActionPointPreserve to 0 temporarily')
+            return 0
         elif remain <= 2:
             logger.info('Just less than 3 days to OpSi reset, '
-                        'set OpsiMeowfficerFarming.ActionPointPreserve < 200 temporarily')
-            self.config.override(
-                OpsiMeowfficerFarming_ActionPointPreserve=min(
-                    self.config.OpsiMeowfficerFarming_ActionPointPreserve,
-                    200)
-            )
-            return True
+                        'set ActionPointPreserve < 200 temporarily')
+            return 200
         else:
             logger.info('Not close to OpSi reset')
-            return False
+            return maxsize
 
     def handle_after_auto_search(self):
         logger.hr('After auto search', level=2)

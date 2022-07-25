@@ -5782,8 +5782,8 @@
           "war_archives_20181020_en"
         ],
         "cn": "war_archives_20210624_cn",
-        "en": "war_archives_20210325_cn",
-        "jp": "war_archives_20210325_cn",
+        "en": "war_archives_20210624_cn",
+        "jp": "war_archives_20210624_cn",
         "tw": "war_archives_20181227_cn"
       },
       "Mode": {
@@ -6481,7 +6481,7 @@
     "OpsiMeowfficerFarming": {
       "ActionPointPreserve": {
         "type": "input",
-        "value": 500
+        "value": 1000
       },
       "HazardLevel": {
         "type": "select",
@@ -6511,7 +6511,62 @@
         ]
       },
       "Submarine": {
+        "type": "hide",
+        "value": false
+      }
+    }
+  },
+  "OpsiHazard1Leveling": {
+    "Scheduler": {
+      "Enable": {
         "type": "checkbox",
+        "value": false
+      },
+      "NextRun": {
+        "type": "input",
+        "value": "2020-01-01 00:00:00",
+        "validate": "datetime"
+      },
+      "Command": {
+        "type": "hide",
+        "value": "OpsiHazard1Leveling"
+      },
+      "SuccessInterval": {
+        "type": "hide",
+        "value": 30
+      },
+      "FailureInterval": {
+        "type": "hide",
+        "value": 60
+      },
+      "ServerUpdate": {
+        "type": "hide",
+        "value": "00:00"
+      }
+    },
+    "OpsiHazard1Leveling": {
+      "YellowCoinPreserve": {
+        "type": "input",
+        "value": 100000
+      },
+      "ActionPointPreserve": {
+        "type": "input",
+        "value": 200
+      }
+    },
+    "OpsiFleet": {
+      "Fleet": {
+        "type": "select",
+        "value": 1,
+        "option": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "Submarine": {
+        "type": "hide",
         "value": false
       }
     }
