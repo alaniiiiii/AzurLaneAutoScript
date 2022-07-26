@@ -181,6 +181,8 @@ class OperationSiren(OSMap):
             OpsiGeneral_AkashiShopFilter='ActionPoint',
             OpsiGeneral_DoRandomMapEvent='skip_scanning_device'
         )
+        self.config.modified['OpsiMeowfficerFarming.Scheduler.Enable'] = True
+        self.config.update()
         while 1:
             self.config.OS_ACTION_POINT_PRESERVE = self.config.OpsiHazard1Leveling_ActionPointPreserve
             if self.config.OpsiAshBeacon_AshAttack \
