@@ -607,10 +607,11 @@ class AlasGUI(Frame):
                     meow_rows = []
                     for row in all_data:
                         if row[1] > 0:
-                            meow_row = []
-
-                            for i, value in enumerate(row):
-                                meow_row.append(str(value) if i != 1 else datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S'))
+                            meow_row = [
+                                int(row[0]),
+                                datetime.fromtimestamp(row[1]).strftime('%Y-%m-%d %H:%M:%S'),
+                                int(row[2])
+                            ] + list(row[3:])
 
                             meow_rows.append(meow_row)
 
