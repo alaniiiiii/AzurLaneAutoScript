@@ -16,6 +16,7 @@ from typing import Dict, List, Optional, Any
 
 # Import fake module before import pywebio to avoid importing unnecessary module PIL
 from module.webui.fake_pil_module import import_fake_pil_module
+from module.statistics.azurstats import AzurStats
 
 import_fake_pil_module()
 
@@ -600,6 +601,24 @@ class AlasGUI(Frame):
 
                     put_html(build_title_block('短猫相接数据收集', margin_top=20, margin_bottom=8))
                     put_html(build_simple_table(meow_labels, [meow_values]))
+
+                    # ========== 短猫相接收获 ==========
+                    all_data = AzurStats.load_meowofficer_farming()
+                    meow_rows = []
+                    for row in all_data:
+                        if row[1] > 0:
+                            meow_row = []
+
+                            for i, value in enumerate(row):
+                                meow_row.append(str(value) if i != 1 else datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S'))
+
+                            meow_rows.append(meow_row)
+
+                    put_html(build_title_block('短猫相接收获', margin_top=20, margin_bottom=8))
+                    if meow_rows:
+                        put_html(build_simple_table(AzurStats.meowofficer_farming_labels, meow_rows))
+                    else:
+                        put_html(build_muted_notice('暂无数据，请将\"大世界掉落截图\"设置为\"上传\"'))
 
                     # ========== 短猫提前开始建议 ==========
                     try:

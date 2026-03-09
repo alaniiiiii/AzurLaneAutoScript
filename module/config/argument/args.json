@@ -513,7 +513,7 @@
       },
       "OpsiRecord": {
         "type": "select",
-        "value": "do_not",
+        "value": "upload",
         "option": [
           "do_not",
           "save",

@@ -172,7 +172,7 @@ DropRecord:
     value: do_not
     option: [do_not, save]
   OpsiRecord:
-    value: do_not
+    value: upload
     option: [do_not, save, upload, save_and_upload]
   MeowfficerBuy:
     value: do_not
