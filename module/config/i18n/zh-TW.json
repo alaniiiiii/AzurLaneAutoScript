@@ -4890,7 +4890,7 @@
       "ClickToUpdate": "進行更新",
       "RetryUpdate": "重試更新",
       "CancelUpdate": "取消更新",
-      "Open": "Gui.Button.Open"
+      "Open": "開啟"
     },
     "Toast": {
       "DisableTranslateMode": "點選這裡關閉翻譯模式",
@@ -4943,7 +4943,7 @@
       "Pending": "佇列中",
       "Waiting": "等待中",
       "NoTask": "無任務",
-      "Stat": "Gui.Overview.Stat"
+      "Stat": "統計"
     },
     "Dashboard": {
       "TimeError": "時間錯誤",

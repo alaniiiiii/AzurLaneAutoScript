@@ -4890,7 +4890,7 @@
       "ClickToUpdate": "アップデートを行う",
       "RetryUpdate": "更新を再試行します",
       "CancelUpdate": "更新をキャンセルする",
-      "Open": "Gui.Button.Open"
+      "Open": "開く"
     },
     "Toast": {
       "DisableTranslateMode": "翻訳モードをオフにするにはここをクリックしてください",
@@ -4943,7 +4943,7 @@
       "Pending": "キューにいます",
       "Waiting": "待っている",
       "NoTask": "タスクがありません",
-      "Stat": "Gui.Overview.Stat"
+      "Stat": "統計"
     },
     "Dashboard": {
       "TimeError": "時間誤差",
