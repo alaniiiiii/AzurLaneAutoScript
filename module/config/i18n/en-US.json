@@ -4889,7 +4889,8 @@
       "CheckUpdate": "Check for Updates",
       "ClickToUpdate": "Update Now",
       "RetryUpdate": "Retry Update",
-      "CancelUpdate": "Cancel Update"
+      "CancelUpdate": "Cancel Update",
+      "Open": "Gui.Button.Open"
     },
     "Toast": {
       "DisableTranslateMode": "Click here to turn off translation mode",
@@ -4941,7 +4942,8 @@
       "Running": "Running",
       "Pending": "in queue",
       "Waiting": "Waiting",
-      "NoTask": "No tasks"
+      "NoTask": "No tasks",
+      "Stat": "Gui.Overview.Stat"
     },
     "Dashboard": {
       "TimeError": "time error",

@@ -4889,7 +4889,8 @@
       "CheckUpdate": "🔍 寻找新伙伴",
       "ClickToUpdate": "🚀 马上登场",
       "RetryUpdate": "🔄 再试一次喵",
-      "CancelUpdate": "🛑 先别更新"
+      "CancelUpdate": "🛑 先别更新",
+      "Open": "Gui.Button.Open"
     },
     "Toast": {
       "DisableTranslateMode": "点击这里关闭翻译模式喵",
@@ -4941,7 +4942,8 @@
       "Running": "🏃‍♀️ 在忙喵",
       "Pending": "⏳ 等一下喵",
       "Waiting": "💤 待命中",
-      "NoTask": "🕊️ 没事喵"
+      "NoTask": "🕊️ 没事喵",
+      "Stat": "Gui.Overview.Stat"
     },
     "Dashboard": {
       "TimeError": "❓ 时空错乱",
