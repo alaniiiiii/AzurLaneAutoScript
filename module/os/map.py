@@ -1436,7 +1436,6 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
                 combat = self.os_auto_search_run(drop, interrupt=interrupt)
                 finished_combat += combat
 
-                # Record current zone, skip this if no rewards from auto search.
                 drop.add(self.device.image)
 
                 self.hp_reset()
@@ -1448,17 +1447,19 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
                             self.globe_goto(prev, types='DANGEROUS')
                             continue
                 break
-
-            # Rescan
-            self._solved_map_event = set()
-            self._solved_fleet_mechanism = False
-            if question:
-                self.clear_question(drop=drop)
-            if rescan:
-                self.map_rescan(rescan_mode=rescan, drop=drop)
-
-            if drop.count == 1:
+            
+            if drop.count <= 1:
                 drop.clear()
+
+            drop.set_combat_count(self._auto_search_battle_count)
+
+        # Rescan
+        self._solved_map_event = set()
+        self._solved_fleet_mechanism = False
+        if question:
+            self.clear_question(drop=drop)
+        if rescan:
+            self.map_rescan(rescan_mode=rescan, drop=drop)
 
         return finished_combat
 
@@ -1479,7 +1480,8 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
                 method=self.config.DropRecord_OpsiRecord
         ) as drop:
             try:
-                self.os_auto_search_run(drop, strategic=True)
+                combat = self.os_auto_search_run(drop, strategic=True)
+                drop.set_combat_count(combat)
                 drop.add(self.device.image)
                 self.hp_reset()
                 self.hp_get()
@@ -1490,6 +1492,11 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             except Exception as e:
                 logger.warning(f'Strategic search interrupted: {e}')
                 return False  # 被中断
+            finally:
+                if drop.count <= 1:
+                    drop.clear()
+                
+                drop.set_combat_count(self._auto_search_battle_count)
 
     def map_rescan_current(self, drop=None, clicked_grids=None):
         """
@@ -2048,7 +2055,7 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
                 self.os_map_goto_globe(unpin=False)
                 self.globe_goto(target_zone, types=(siren_bug_type.upper(),), refresh=True)
                 self.zone_init()
-
+                
                 # Siren bug count sleep
                 if count > 0:
                     logger.info(f'塞壬 Bug 今日已使用 {count} 次，自律前等待 {count} 秒')
