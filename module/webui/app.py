@@ -416,13 +416,13 @@ class AlasGUI(Frame):
                 timeline = get_ap_timeline(instance_name=instance_name)
             except Exception as e:
                 with use_scope("ap_chart", clear=True):
-                    put_text(f"加载体力数据失败: {e}")
+                    put_text(t("Gui.Stat.LoadApDataFailed", e=e))
                 return
 
             if not timeline:
                 with use_scope("ap_chart", clear=True):
-                    put_html(build_muted_notice('暂无体力变化数据，运行侵蚀1任务后将自动记录'))
-                    put_button("刷新", onclick=_render_ap_chart, color="off")
+                    put_html(build_muted_notice(t("Gui.Stat.NoApData")))
+                    put_button(t("Gui.Stat.Refresh"), onclick=_render_ap_chart, color="off")
                 return
 
             # 解析原始数据点
@@ -439,7 +439,7 @@ class AlasGUI(Frame):
 
             if not raw_points:
                 with use_scope("ap_chart", clear=True):
-                    put_html(build_muted_notice('暂无有效体力数据'))
+                    put_html(build_muted_notice(t("Gui.Stat.NoValidApData")))
                 return
 
             raw_points.sort(key=lambda p: p['dt'])
@@ -457,7 +457,7 @@ class AlasGUI(Frame):
                 for p in raw_points:
                     labels.append(p['dt'].strftime('%m-%d %H:%M'))
                     ap_list.append(p['ap'])
-                view_title = "分时曲线 (详细波动)"
+                view_title = t("Gui.Stat.ViewTitleLine")
             else:
                 from collections import OrderedDict
                 candles = OrderedDict()
@@ -478,7 +478,7 @@ class AlasGUI(Frame):
                             c['low'] = min(c['low'], p['ap'])
                             c['close'] = p['ap']
                             c['count'] += 1
-                    view_title = f"天视图 ({today.strftime('%m-%d')} 小时K线)"
+                    view_title = t("Gui.Stat.ViewTitleDay", day=today.strftime('%m-%d'))
                 else:
                     for p in raw_points:
                         day_key = p['dt'].strftime('%m-%d')
@@ -490,12 +490,12 @@ class AlasGUI(Frame):
                             c['low'] = min(c['low'], p['ap'])
                             c['close'] = p['ap']
                             c['count'] += 1
-                    view_title = "月视图 (日K线)"
+                    view_title = t("Gui.Stat.ViewTitleMonth")
                     
                 if not candles:
                     with use_scope("ap_chart", clear=True):
-                        put_html(build_muted_notice('无法聚合K线数据'))
-                        put_button("分时", onclick=lambda: (setattr(self, '_ap_chart_view', 'line'), _render_ap_chart()), color="off")
+                        put_html(build_muted_notice(t("Gui.Stat.CannotAggregateKline")))
+                        put_button(t("Gui.Stat.ViewLineShort"), onclick=lambda: (setattr(self, '_ap_chart_view', 'line'), _render_ap_chart()), color="off")
                     return
                 for k, v in candles.items():
                     labels.append(k)
@@ -512,10 +512,10 @@ class AlasGUI(Frame):
             ap_cur = all_ap[-1]
             if current_view == 'line':
                 ap_change = ap_list[-1] - ap_list[0] if len(ap_list) >= 2 else 0
-                data_points_text = f"共 {len(labels)} 个点"
+                data_points_text = t("Gui.Stat.DataPointsCount", count=len(labels))
             else:
                 ap_change = closes[-1] - opens[0] if len(closes) > 0 else 0
-                data_points_text = f"共 {len(labels)} 根K线"
+                data_points_text = t("Gui.Stat.CandlesCount", count=len(labels))
             change_color = '#ef5350' if ap_change >= 0 else '#26a69a'
             change_sign = '+' if ap_change >= 0 else ''
 
@@ -556,10 +556,10 @@ class AlasGUI(Frame):
                     self._ap_chart_view = v
                     _render_ap_chart()
                 put_row([
-                    put_button("分时(详细波动)", onclick=lambda: _switch_view('line'), color="off" if current_view!='line' else "primary"),
-                    put_button("天视图(小时K)", onclick=lambda: _switch_view('day'), color="off" if current_view!='day' else "primary"),
-                    put_button("月视图(日K)", onclick=lambda: _switch_view('month'), color="off" if current_view!='month' else "primary"),
-                    put_button("刷新", onclick=_render_ap_chart, color="off"),
+                    put_button(t("Gui.Stat.ViewLineButton"), onclick=lambda: _switch_view('line'), color="off" if current_view!='line' else "primary"),
+                    put_button(t("Gui.Stat.ViewDayButton"), onclick=lambda: _switch_view('day'), color="off" if current_view!='day' else "primary"),
+                    put_button(t("Gui.Stat.ViewMonthButton"), onclick=lambda: _switch_view('month'), color="off" if current_view!='month' else "primary"),
+                    put_button(t("Gui.Stat.Refresh"), onclick=_render_ap_chart, color="off"),
                 ], size="auto")
 
         put_scope("ap_chart", [])
@@ -581,7 +581,7 @@ class AlasGUI(Frame):
                 s = get_opsi_stats(instance_name=instance_name).summary()
             except Exception as e:
                 with use_scope("opsi_stats", clear=True):
-                    put_text(f"Failed to load OpSi stats: {e}")
+                    put_text(t("Gui.Stat.LoadOpsiStatsFailed", e=e))
                 return
 
             # ====================每日经验检测====================
@@ -593,14 +593,14 @@ class AlasGUI(Frame):
                 last_check_time = exp_data.get("last_check_time", "-") if exp_data else "-"
             except Exception as e:
                 with use_scope("opsi_stats", clear=True):
-                    put_text(f"Failed to load exp stats: {e}")
+                    put_text(t("Gui.Stat.LoadExpStatsFailed", e=e))
                 return
 
             with use_scope("opsi_stats", clear=True):
-                put_html(build_title_block('每日经验检测'))
-                put_row([put_text(f"检测时间: {last_check_time}"), put_text(f"目标等级: {target_level}")])
+                put_html(build_title_block(t("Gui.Stat.DailyExpCheckTitle")))
+                put_row([put_text(t("Gui.Stat.CheckTime", value=last_check_time)), put_text(t("Gui.Stat.TargetLevel", value=target_level))])
                 if ships_data:
-                    exp_labels = ["舰位", "等级", "当前经验(本级)", "总经验", "距目标经验", "还需出击", "预计时间"]
+                    exp_labels = [t("Gui.Stat.ShipSlot"), t("Gui.Stat.Level"), t("Gui.Stat.CurrentExpThisLevel"), t("Gui.Stat.TotalExp"), t("Gui.Stat.ExpToTarget"), t("Gui.Stat.SortiesNeeded"), t("Gui.Stat.EstimatedTime")]
                     exp_rows = []
                     from module.statistics.opsi_month import get_opsi_stats as get_opsi_stats_inner
                     current_battles = get_opsi_stats_inner(instance_name=instance_name).summary().get('total_battles', 0)
@@ -618,10 +618,10 @@ class AlasGUI(Frame):
 
                     put_html(build_simple_table(exp_labels, exp_rows))
                 else:
-                    put_html(build_muted_notice('暂无经验数据，运行侵蚀1练级后将自动记录'))
+                    put_html(build_muted_notice(t("Gui.Stat.NoExpData")))
 
             # ====================侵蚀1统计====================
-            labels = ["月份", "战斗场次", "战斗轮次", "出击消耗", "遇见明石次数", "遇见明石概率", "平均体力", "净赚体力", "循环效率", "平均战斗时间", "平均一轮时长"]
+            labels = [t("Gui.Stat.Month"), t("Gui.Stat.BattleCount"), t("Gui.Stat.BattleRounds"), t("Gui.Stat.SortieCost"), t("Gui.Stat.AkashiEncounters"), t("Gui.Stat.AkashiRate"), t("Gui.Stat.AverageAP"), t("Gui.Stat.NetAP"), t("Gui.Stat.LoopEfficiency"), t("Gui.Stat.AvgBattleTimeHeader"), t("Gui.Stat.AvgRoundTime")]
             month = s.get("month", "-")
             total = s.get("total_battles", "-")
             try:
@@ -693,15 +693,15 @@ class AlasGUI(Frame):
                     today_exp = today_stats.get('total_exp_gained', 0)
                     today_run_time = int(today_stats.get('total_run_time', 0) // 60)
                     today_exp_str = f"{today_exp:,}"
-                    today_run_str = f"{today_run_time}分钟"
+                    today_run_str = f"{today_run_time}{t('Gui.Stat.MinuteUnit')}"
                 else:
                     today_battles = 0
                     today_exp_str = "-"
                     today_run_str = "-"
                 
-                avg_cl1_battle_str = f"{avg_cl1_battle_time:.1f}秒"
-                avg_cl1_round_str = f"{avg_cl1_round_time:.1f}秒"
-                exp_per_hour_str = f"{exp_per_hour:.0f}/小时"
+                avg_cl1_battle_str = f"{avg_cl1_battle_time:.1f}{t('Gui.Stat.SecondUnit')}"
+                avg_cl1_round_str = f"{avg_cl1_round_time:.1f}{t('Gui.Stat.SecondUnit')}"
+                exp_per_hour_str = f"{exp_per_hour:.0f}/{t('Gui.Stat.HourUnit')}"
             except Exception:
                 avg_cl1_battle_str = "-"
                 avg_cl1_round_str = "-"
@@ -710,15 +710,15 @@ class AlasGUI(Frame):
                 today_exp_str = "-"
                 today_run_str = "-"
 
-            labels = ["月份", "战斗场次", "战斗轮次", "出击消耗", "遇见明石次数", "遇见明石概率", "平均体力", "净赚体力", "循环效率", "经验效率", "平均战斗时间", "平均一轮时长", "今日战斗", "今日经验", "今日运行"]
+            labels = [t("Gui.Stat.Month"), t("Gui.Stat.BattleCount"), t("Gui.Stat.BattleRounds"), t("Gui.Stat.SortieCost"), t("Gui.Stat.AkashiEncounters"), t("Gui.Stat.AkashiRate"), t("Gui.Stat.AverageAP"), t("Gui.Stat.NetAP"), t("Gui.Stat.LoopEfficiency"), t("Gui.Stat.ExpEfficiencyHeader"), t("Gui.Stat.AvgBattleTimeHeader"), t("Gui.Stat.AvgRoundTime"), t("Gui.Stat.TodayBattlesHeader"), t("Gui.Stat.TodayExpHeader"), t("Gui.Stat.TodayRunHeader")]
 
             values = [month, tb, rounds, sortie_cost, ak, akashi_rate, avg_ap, net_ap, loop_eff, exp_per_hour_str, avg_cl1_battle_str, avg_cl1_round_str, today_battles, today_exp_str, today_run_str]
 
             table = [labels, values]
 
             with use_scope("opsi_stats", clear=True):
-                put_html(build_title_block('雪风大人的侵蚀一数据收集'))
-                put_row([put_text(f"当月购买体力: {ap_bought}")])
+                put_html(build_title_block(t("Gui.Stat.OpsiDataCollectionTitle")))
+                put_row([put_text(t("Gui.Stat.MonthlyPurchasedAP", value=ap_bought))])
                 put_html(build_simple_table(labels, [values]))
 
                 # ========== 短猫统计数据 ==========
@@ -740,12 +740,12 @@ class AlasGUI(Frame):
                     meow_rounds = 0
 
                 if meow_round_times:
-                    avg_time_str = f"{meow_avg_time:.1f}秒"
+                    avg_time_str = f"{meow_avg_time:.1f}{t('Gui.Stat.SecondUnit')}"
                 else:
                     avg_time_str = "-"
 
                 if meow_avg_battle_time > 0:
-                    avg_battle_time_str = f"{meow_avg_battle_time:.1f}秒"
+                    avg_battle_time_str = f"{meow_avg_battle_time:.1f}{t('Gui.Stat.SecondUnit')}"
                 else:
                     avg_battle_time_str = "-"
 
@@ -756,9 +756,9 @@ class AlasGUI(Frame):
                     avg_battle_time_str,  # 平均单场战斗时间
                     avg_time_str,         # 平均一轮短猫时长
                 ]
-                meow_labels = ["月份", "战斗场次", "出击轮次", "平均战斗时间", "平均一轮短猫时长"]
+                meow_labels = [t("Gui.Stat.Month"), t("Gui.Stat.BattleCount"), t("Gui.Stat.MeowRounds"), t("Gui.Stat.AvgBattleTimeHeader"), t("Gui.Stat.AvgMeowRoundTime")]
 
-                put_html(build_title_block('短猫相接数据收集', margin_top=20, margin_bottom=8))
+                put_html(build_title_block(t("Gui.Stat.MeowDataCollectionTitle"), margin_top=20, margin_bottom=8))
                 put_html(build_simple_table(meow_labels, [meow_values]))
 
                 # ========== 短猫相接收获 ==========
@@ -774,11 +774,11 @@ class AlasGUI(Frame):
 
                         meow_rows.append(meow_row)
 
-                put_html(build_title_block('短猫相接收获', margin_top=20, margin_bottom=8))
+                put_html(build_title_block(t("Gui.Stat.MeowLootTitle"), margin_top=20, margin_bottom=8))
                 if meow_rows:
                     put_html(build_simple_table(AzurStats.meowofficer_farming_labels, meow_rows))
                 else:
-                    put_html(build_muted_notice('暂无数据，请将\"大世界掉落截图\"设置为\"上传\"'))
+                    put_html(build_muted_notice(t("Gui.Stat.NoMeowDataNotice")))
 
                 # ========== 短猫提前开始建议 ==========
                 try:
@@ -798,16 +798,16 @@ class AlasGUI(Frame):
                     hours_ahead = advance_calc.get('hours_ahead', 0)
                     recommendation = advance_calc.get('recommendation', '-')
 
-                    put_html(build_title_block('短猫提前开始建议', margin_top=20, margin_bottom=8))
+                    put_html(build_title_block(t("Gui.Stat.MeowAdvanceAdviceTitle"), margin_top=20, margin_bottom=8))
                     put_row([
-                        put_text(f"当前AP: {current_ap}"),
-                        put_text(f"每轮消耗: {meow_round_ap} AP"),
-                        put_text(f"可运行轮数: {available_rounds:.1f}轮"),
+                        put_text(t("Gui.Stat.CurrentAP", value=current_ap)),
+                        put_text(t("Gui.Stat.ApPerRound", value=meow_round_ap)),
+                        put_text(t("Gui.Stat.AvailableRounds", value=f"{available_rounds:.1f}", unit=t("Gui.Stat.RoundUnit"))),
                     ])
                     put_row([
-                        put_text(f"平均每轮耗时: {avg_meow_round_time:.1f}秒"),
-                        put_text(f"当前模式: {mode_name}"),
-                        put_text(f"建议提前: {hours_ahead:.1f}小时"),
+                        put_text(t("Gui.Stat.AvgRoundDuration", value=f"{avg_meow_round_time:.1f}", unit=t("Gui.Stat.SecondUnit"))),
+                        put_text(t("Gui.Stat.CurrentMode", value=mode_name)),
+                        put_text(t("Gui.Stat.RecommendAhead", value=f"{hours_ahead:.1f}", unit=t("Gui.Stat.HourUnit"))),
                     ])
                     put_html(build_recommendation_box(recommendation))
 
@@ -816,7 +816,7 @@ class AlasGUI(Frame):
                     try:
                         from module.statistics.opsi_month import get_opsi_stats, compute_monthly_cl1_akashi_ap
                     except Exception as e:
-                        toast(f"导出失败：无法加载统计模块：{e}", color="error")
+                        toast(t("Gui.Stat.ExportModuleLoadFailed", e=e), color="error")
                         return
 
                     try:
@@ -867,7 +867,7 @@ class AlasGUI(Frame):
                     else:
                         eff_local = "-"
 
-                    labels_local = ["月份", "战斗场次", "战斗轮次", "出击消耗", "遇见明石次数", "遇见明石概率(%)", "平均体力", "净赚体力", "循环效率(%)", "当月购买体力"]
+                    labels_local = [t("Gui.Stat.Month"), t("Gui.Stat.BattleCount"), t("Gui.Stat.BattleRounds"), t("Gui.Stat.SortieCost"), t("Gui.Stat.AkashiEncounters"), t("Gui.Stat.CsvHeaderAkashiRate"), t("Gui.Stat.AverageAP"), t("Gui.Stat.NetAP"), t("Gui.Stat.CsvHeaderLoopEfficiency"), t("Gui.Stat.CsvHeaderMonthlyPurchasedAP")]
                     values_local = [
                         month_local,
                         total_battles_local,
@@ -891,7 +891,7 @@ class AlasGUI(Frame):
                     output.write(','.join([_escape(c) for c in values_local]) + "\n")
                     csv_bytes = output.getvalue().encode('utf-8-sig')
 
-                    filename_local = f"侵蚀1练级_{month_local}_详细数据.csv"
+                    filename_local = t("Gui.Stat.CsvFilenameTemplate", month=month_local)
 
                     if save_to_desktop:
                         try:
@@ -900,14 +900,14 @@ class AlasGUI(Frame):
                             fpath = desktop_local / filename_local
                             with open(fpath, 'wb') as _f:
                                 _f.write(csv_bytes)
-                            toast(f"已保存至桌面：{fpath}", color="success")
+                            toast(t("Gui.Stat.SavedToDesktop", path=fpath), color="success")
                         except Exception as e:
                             logger.exception(e)
-                            toast(f"保存桌面失败：{e}", color="error")
+                            toast(t("Gui.Stat.SaveDesktopFailed", e=e), color="error")
 
                 put_row([
-                    put_button("刷新", onclick=_render_opsi_stats, color="off"),
-                    put_button("导出并保存到桌面", onclick=lambda: export_opsi_csv(True), color="off"),
+                    put_button(t("Gui.Stat.Refresh"), onclick=_render_opsi_stats, color="off"),
+                    put_button(t("Gui.Stat.ExportAndSaveDesktop"), onclick=lambda: export_opsi_csv(True), color="off"),
                 ], size="auto")
 
         put_scope("opsi_stats", [])
@@ -929,7 +929,7 @@ class AlasGUI(Frame):
                 stats = get_ship_exp_stats(instance_name=instance_name)
                 if not stats.data or not stats.data.get('ships'):
                     with use_scope("ship_exp_table", clear=True):
-                        put_html(build_muted_notice('暂无舰船经验数据，请先运行"每日经验检测"任务'))
+                        put_html(build_muted_notice(t("Gui.Stat.NoShipExpData")))
                     return
                 
                 current_battles = get_opsi_stats_func(instance_name=instance_name).summary().get('total_battles', 0)
@@ -941,9 +941,17 @@ class AlasGUI(Frame):
                 # 从daily_stats获取今日战斗场次
                 today_battles = today_stats.get('battle_count', 0) if today_stats else 0
                 
-                labels = ["舰位", "等级", "当前经验(本级)", "总经验", 
-                            "目标等级所需经验", "已战斗场次", "还需经验", 
-                            "还需出击", "预计时间"]
+                labels = [
+                    t("Gui.Stat.ShipSlot"),
+                    t("Gui.Stat.Level"),
+                    t("Gui.Stat.CurrentExpThisLevel"),
+                    t("Gui.Stat.TotalExp"),
+                    t("Gui.Stat.TargetExpRequired"),
+                    t("Gui.Stat.BattlesCompleted"),
+                    t("Gui.Stat.ExpRemaining"),
+                    t("Gui.Stat.SortiesNeeded"),
+                    t("Gui.Stat.EstimatedTime"),
+                ]
                 
                 rows = []
                 for ship in stats.data.get('ships', []):
@@ -962,33 +970,33 @@ class AlasGUI(Frame):
                     ])
                 
                 with use_scope("ship_exp_table", clear=True):
-                    put_html(build_title_block('每日经验检测：识别到的舰娘等级与升级进度', margin_top=16, margin_bottom=8))
-                    put_text(f"上次检查时间: {stats.data.get('last_check_time', '-')}")
+                    put_html(build_title_block(t("Gui.Stat.ShipExpProgressTitle"), margin_top=16, margin_bottom=8))
+                    put_text(t("Gui.Stat.LastCheckTime", value=stats.data.get('last_check_time', '-')))
                     
                     # 显示效率统计
                     put_row([
-                        put_text(f"平均战斗时间: {avg_battle_time:.1f}秒"),
-                        put_text(f"平均一轮侵蚀1时长: {stats.get_average_round_time():.1f}秒"),
-                        put_text(f"经验效率: {exp_per_hour:.0f}/小时"),
+                        put_text(t("Gui.Stat.AvgBattleTime", value=f"{avg_battle_time:.1f}", unit=t("Gui.Stat.SecondUnit"))),
+                        put_text(t("Gui.Stat.AvgOpsiRoundTime", value=f"{stats.get_average_round_time():.1f}", unit=t("Gui.Stat.SecondUnit"))),
+                        put_text(t("Gui.Stat.ExpEfficiency", value=f"{exp_per_hour:.0f}", unit=t("Gui.Stat.HourUnit"))),
                     ])
                     
                     # 显示今日统计
                     if today_stats:
                         run_minutes = int(today_stats.get('total_run_time', 0) // 60)
                         put_row([
-                            put_text(f"今日战斗: {today_stats.get('battle_count', 0)}场"),
-                            put_text(f"今日经验: {today_stats.get('total_exp_gained', 0)}"),
-                            put_text(f"今日运行: {run_minutes}分钟"),
+                            put_text(t("Gui.Stat.TodayBattles", value=today_stats.get('battle_count', 0), unit=t("Gui.Stat.TodayBattleUnit"))),
+                            put_text(t("Gui.Stat.TodayExp", value=today_stats.get('total_exp_gained', 0))),
+                            put_text(t("Gui.Stat.TodayRun", value=run_minutes, unit=t("Gui.Stat.MinuteUnit"))),
                         ])
                     else:
-                        put_text("暂无今日战斗数据，运行战斗后将自动更新")
+                        put_text(t("Gui.Stat.NoTodayBattleData"))
                     
                     put_html(build_simple_table(labels, rows, extra_style=' margin-top:8px;'))
                     
-                    put_button("刷新", onclick=_render_ship_exp, color="off")
+                    put_button(t("Gui.Stat.Refresh"), onclick=_render_ship_exp, color="off")
             except Exception as e:
                 with use_scope("ship_exp_table", clear=True):
-                    put_text(f"加载舰船经验数据失败: {e}")
+                    put_text(t("Gui.Stat.LoadShipExpFailed", e=e))
 
         put_scope("ship_exp_table", [])
         _render_ship_exp()
