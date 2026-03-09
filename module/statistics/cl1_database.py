@@ -284,8 +284,13 @@ class Cl1Database:
         Args:
             instance: 实例名称
             duration: 战斗耗时（秒）
-            hazard_level: 侵蚀等级，用于计算出击轮次
+            hazard_level: 侵蚀等级，用于计算出击轮次（2-6）
         """
+        # 验证 hazard_level 是否在有效范围内
+        if hazard_level is not None and hazard_level not in [2, 3, 4, 5, 6]:
+            logger.debug(f'Invalid hazard_level {hazard_level}, ignoring')
+            hazard_level = None
+
         month = datetime.now().strftime('%Y-%m')
         data = self.get_stats(instance, month)
 
@@ -293,18 +298,28 @@ class Cl1Database:
             data['meow_round_times'] = []
 
         times = data['meow_round_times']
+
+        # 迁移旧数据：将浮点数转换为字典格式
+        normalized_times = []
+        for entry in times:
+            if isinstance(entry, dict) and 'duration' in entry:
+                normalized_times.append(entry)
+            elif isinstance(entry, (int, float)):
+                # 旧格式：裸浮点数，转换为新格式
+                normalized_times.append({'duration': float(entry), 'hazard_level': None})
+
         # 保存为字典，包含时长和侵蚀等级
-        entry = {
+        new_entry = {
             'duration': round(duration, 2),
             'hazard_level': hazard_level
         }
-        times.append(entry)
+        normalized_times.append(new_entry)
 
         # 只保留最近100个样本
-        if len(times) > 100:
-            times = times[-100:]
+        if len(normalized_times) > 100:
+            normalized_times = normalized_times[-100:]
 
-        data['meow_round_times'] = times
+        data['meow_round_times'] = normalized_times
         self.save_stats(instance, month, data)
 
     def add_meow_battle_time(self, instance: str, duration: float):
@@ -353,10 +368,19 @@ class Cl1Database:
         round_times = data.get('meow_round_times', [])
         battle_times = data.get('meow_battle_times', [])
 
+        # 提取时长数据（兼容旧格式：浮点数和新格式：字典）
+        round_durations = []
+        for entry in round_times:
+            if isinstance(entry, dict) and 'duration' in entry:
+                round_durations.append(entry['duration'])
+            elif isinstance(entry, (int, float)):
+                # 兼容旧格式：裸浮点数
+                round_durations.append(float(entry))
+
         # 计算平均每轮时间
         avg_round_time = 0.0
-        if round_times:
-            avg_round_time = round(sum(round_times) / len(round_times), 2)
+        if round_durations:
+            avg_round_time = round(sum(round_durations) / len(round_durations), 2)
 
         # 计算平均单场战斗时间
         avg_battle_time = 0.0
