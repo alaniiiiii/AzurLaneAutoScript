@@ -922,7 +922,9 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
         try:
             from module.statistics.cl1_database import db as cl1_db
             instance_name = getattr(self.config, 'config_name', 'default')
-            cl1_db.add_meow_round_time(instance_name, duration)
+            # 获取侵蚀等级用于计算出击轮次
+            hazard_level = getattr(getattr(self, 'zone', None), 'hazard_level', None)
+            cl1_db.add_meow_round_time(instance_name, duration, hazard_level)
         except Exception:
             logger.debug('Failed to record meow search duration', exc_info=True)
 
