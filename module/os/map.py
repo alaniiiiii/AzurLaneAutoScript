@@ -1359,7 +1359,7 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             self.device.click(grid)
             with self.config.temporary(STORY_ALLOW_SKIP=False, OS_SIREN_DEVICE_USAGE='use_until_destroyed'):
                 result = self.wait_until_walk_stable(
-                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
+                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(3, count=4))
             if 'akashi' in result:
                 self._solved_map_event.add('is_akashi')
                 return True
