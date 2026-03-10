@@ -240,6 +240,7 @@ YukikazeTaskManager:
       > Event > Event2 > Raid > Hospital > HospitalEvent > Coalition > RaidScuttle > Main > Main2 > Main3
       > OpsiMeowfficerFarming
       > GemsFarming
+      > Ambush11
       > OpsiHazard1Leveling
       > ThreeOilLowCost
 OneClickRetire:
@@ -447,6 +448,12 @@ GemsFarming:
   ALLowLowVanguardLevel: false
   DelayTaskIFNoFlagship: false
   CommissionLimit: false
+  VanguardLevelMin:
+    value: 1
+    validate: [1, 125]
+  VanguardLevelMax:
+    value: 125
+    validate: [1, 125]
 
 # ==================== Event ====================
 

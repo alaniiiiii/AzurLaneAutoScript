@@ -70,6 +70,10 @@
       "name": "3-Oil Low Cost+",
       "help": "Use a 3-oil low-cost fleet to fight. Automatically replaces and retires the flagship when it reaches level 32."
     },
+    "Ambush11": {
+      "name": "Task.Ambush11.name",
+      "help": "Task.Ambush11.help"
+    },
     "EventGeneral": {
       "name": "Event General",
       "help": ""
@@ -1416,6 +1420,14 @@
     "CommissionLimit": {
       "name": "Prevent the number of emergency commissions from being too large",
       "help": "To prevent the number of emergency orders from being too large and unable to complete daily orders when running 7x24, it is recommended to select only short-term high-yield orders in the order filter."
+    },
+    "VanguardLevelMin": {
+      "name": "GemsFarming.VanguardLevelMin.name",
+      "help": "GemsFarming.VanguardLevelMin.help"
+    },
+    "VanguardLevelMax": {
+      "name": "GemsFarming.VanguardLevelMax.name",
+      "help": "GemsFarming.VanguardLevelMax.help"
     }
   },
   "EventGeneral": {

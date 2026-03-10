@@ -70,6 +70,10 @@
       "name": "⛽ 三油低耗极限挑战",
       "help": "勤俭持家喵！使用三油低耗阵容战斗，旗舰达到32级时会自动更换并送她退役休息哦喵~"
     },
+    "Ambush11": {
+      "name": "Task.Ambush11.name",
+      "help": "Task.Ambush11.help"
+    },
     "EventGeneral": {
       "name": "🏮 活动通用配置",
       "help": "不管什么活动，照着这个准没错喵！"
@@ -1416,6 +1420,14 @@
     "CommissionLimit": {
       "name": "🚫 防爆仓 (控制委托数量)",
       "help": "一直刷的话，紧急委托会把日常委托挤爆的！开这个防止做不完日常喵~"
+    },
+    "VanguardLevelMin": {
+      "name": "GemsFarming.VanguardLevelMin.name",
+      "help": "GemsFarming.VanguardLevelMin.help"
+    },
+    "VanguardLevelMax": {
+      "name": "GemsFarming.VanguardLevelMax.name",
+      "help": "GemsFarming.VanguardLevelMax.help"
     }
   },
   "EventGeneral": {

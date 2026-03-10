@@ -70,6 +70,10 @@
       "name": "三油低耗+",
       "help": "使用三油低耗陣容進行戰鬥，在旗艦達到32級時自動更換旗艦並退役。"
     },
+    "Ambush11": {
+      "name": "Task.Ambush11.name",
+      "help": "Task.Ambush11.help"
+    },
     "EventGeneral": {
       "name": "活動通用",
       "help": ""
@@ -1416,6 +1420,14 @@
     "CommissionLimit": {
       "name": "防止緊急委託數量過多",
       "help": "在7x24執行時防止緊急委託數量過多做不完每日委託，建議在委託過濾器僅選擇短時長高收益委託"
+    },
+    "VanguardLevelMin": {
+      "name": "GemsFarming.VanguardLevelMin.name",
+      "help": "GemsFarming.VanguardLevelMin.help"
+    },
+    "VanguardLevelMax": {
+      "name": "GemsFarming.VanguardLevelMax.name",
+      "help": "GemsFarming.VanguardLevelMax.help"
     }
   },
   "EventGeneral": {

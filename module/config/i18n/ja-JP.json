@@ -70,6 +70,10 @@
       "name": "3燃料低コスト+",
       "help": "3燃料低コスト編成で戦闘し、旗艦がレベル32に達すると自動的に旗艦を交換して退役させます。"
     },
+    "Ambush11": {
+      "name": "Task.Ambush11.name",
+      "help": "Task.Ambush11.help"
+    },
     "EventGeneral": {
       "name": "イベント共通",
       "help": ""
@@ -1416,6 +1420,14 @@
     "CommissionLimit": {
       "name": "緊急委託数の過多を防ぐ",
       "help": "7x24運行時に緊急委託数が多すぎてデイリー委託を完了できないことを防ぐため、委託フィルターでは短時間高収益の委託のみを選択することをお勧めします。"
+    },
+    "VanguardLevelMin": {
+      "name": "GemsFarming.VanguardLevelMin.name",
+      "help": "GemsFarming.VanguardLevelMin.help"
+    },
+    "VanguardLevelMax": {
+      "name": "GemsFarming.VanguardLevelMax.name",
+      "help": "GemsFarming.VanguardLevelMax.help"
     }
   },
   "EventGeneral": {
