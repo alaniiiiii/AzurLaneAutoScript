@@ -12,8 +12,7 @@ from module.statistics.cl1_database import db
 from module.statistics.ship_exp_stats import get_ship_exp_stats
 
 class OSSimulator:
-    def __init__(self, config: AzurLaneConfig):
-        self.config = config
+    def __init__(self):
         self._init_logger()
         self._thread = None
         self._stop_event = threading.Event()
@@ -140,6 +139,9 @@ class OSSimulator:
         except Exception as e:
             self.logger.exception(f"运行中出现错误: {e}")
     
+    def set_config(self, config: AzurLaneConfig):
+        self.config = config
+
     def start(self):
         if self.is_running:
             self.logger.warning("模拟正在进行，请耐心等待")
