@@ -85,7 +85,6 @@ class DropImage:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self:
-            logger.info('[Azurstat] 停止记录截图并提交')
             self.stat.commit(images=self.images, genre=self.genre,
                              save=self.save, upload=self.upload, info=self.info,
                              combat_count=self.combat_count)
@@ -315,7 +314,6 @@ class AzurStats:
         Returns:
             DropImage:
         """
-        logger.info('[Azurstat] 开始记录截图')
         save = 'save' in method
         upload = 'upload' in method
         return DropImage(stat=self, genre=genre, save=save, upload=upload, info=info)
