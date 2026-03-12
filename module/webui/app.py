@@ -169,12 +169,6 @@ def build_simple_table(headers, rows, extra_style: str = '') -> str:
         extra_style=extra_style,
     )
 
-
-def build_recommendation_box(text: str) -> str:
-    tpl = read_webapp_template('recommendation_box.html')
-    return tpl.format(text=text)
-
-
 def build_copyable_device_id(device_id: str) -> str:
     tpl = read_webapp_template('copyable_device_id.html')
     return tpl.format(device_id=device_id)
@@ -910,7 +904,7 @@ class AlasGUI(Frame):
                     put_text(t("Gui.Stat.MeowAutoCleanupStatus",
                                value=t("Gui.Misc.Enabled") if meow_advance_enable else t("Gui.Misc.Disabled"))),
                 ])
-                put_html(build_recommendation_box(recommendation))
+                put_text(recommendation)
 
                 def export_opsi_csv(save_to_desktop: bool = True):
                     import io
