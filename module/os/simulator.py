@@ -86,7 +86,7 @@ class OSSimulator:
         self.logger.info(f'短猫侵蚀等级（目前只支持侵蚀5）: {self.meow_hazard_level}')
         
         log_res = LogRes(self.config)
-        ap = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.IniTialAp')
+        ap = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.InitialAp')
         if not ap:
             ap = log_res.group('ActionPoint')
             ap = ap['Total'] if ap and 'Total' in ap else 0

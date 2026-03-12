@@ -791,7 +791,7 @@ class GeneratedConfig:
 
     # Group `OpsiSimulatorParameters`
     OpsiSimulatorParameters_Samples = 1000
-    OpsiSimulatorParameters_IniTialAp = 0
+    OpsiSimulatorParameters_InitialAp = 0
     OpsiSimulatorParameters_InitialCoin = 0
 
     # Group `Storage`
