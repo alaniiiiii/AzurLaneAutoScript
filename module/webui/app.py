@@ -220,6 +220,8 @@ class AlasGUI(Frame):
         self._announcement_result = None
         self._announcement_fetching = False
         self._announcement_force = False
+        self.simulator = OSSimulator()
+        self._simulator_logger_pm = None
 
 
 
@@ -1129,15 +1131,17 @@ class AlasGUI(Frame):
                 self.set_navigator(group)
                 
     def _os_simulator(self):
-        simulator = OSSimulator(self.alas_config)
+        self.simulator.set_config(self.alas_config)
 
-        class SimulatorLogger:
-            def __init__(self):
-                self.renderables = []
-                self.renderables_max_length = 2000
-                self.renderables_reduce_length = 1000
+        if self._simulator_logger_pm is None:
+            class SimulatorLogger:
+                def __init__(self):
+                    self.renderables = []
+                    self.renderables_max_length = 2000
+                    self.renderables_reduce_length = 1000
+            self._simulator_logger_pm = SimulatorLogger()
 
-        pm = SimulatorLogger()
+        pm = self._simulator_logger_pm
         import logging
         class ListHandler(logging.Handler):
             def emit(self, record):
@@ -1147,9 +1151,9 @@ class AlasGUI(Frame):
                     del pm.renderables[:pm.renderables_reduce_length]
 
         # Remove existing handlers to avoid duplication on page refresh
-        for h in simulator.logger.handlers[:]:
+        for h in self.simulator.logger.handlers[:]:
             if getattr(h, 'is_webui_simulator_handler', False):
-                simulator.logger.removeHandler(h)
+                self.simulator.logger.removeHandler(h)
 
         handler = ListHandler()
         handler.setFormatter(logging.Formatter(
@@ -1157,7 +1161,7 @@ class AlasGUI(Frame):
             datefmt='%Y-%m-%d %H:%M:%S'
         ))
         handler.is_webui_simulator_handler = True
-        simulator.logger.addHandler(handler)
+        self.simulator.logger.addHandler(handler)
 
         put_scope(
             "scheduler-bar",
@@ -1194,9 +1198,9 @@ class AlasGUI(Frame):
         switch_scheduler = BinarySwitchButton(
             label_on=t("Gui.Button.Stop"),
             label_off=t("Gui.Button.Start"),
-            onclick_on=simulator.interrupt,
-            onclick_off=simulator.start,
-            get_state=lambda: simulator.is_running,
+            onclick_on=self.simulator.interrupt,
+            onclick_off=self.simulator.start,
+            get_state=lambda: self.simulator.is_running,
             color_on="off",
             color_off="on",
             scope="scheduler_btn",
