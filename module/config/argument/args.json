@@ -13605,6 +13605,22 @@
       }
     }
   },
+  "OpsiSimulator": {
+    "OpsiSimulatorParameters": {
+      "Samples": {
+        "type": "input",
+        "value": 1000
+      }
+    },
+    "Storage": {
+      "Storage": {
+        "type": "storage",
+        "value": {},
+        "valuetype": "ignore",
+        "display": "disabled"
+      }
+    }
+  },
   "IslandInfo": {
     "IslandSeasonTask": {
       "TaskDict": {

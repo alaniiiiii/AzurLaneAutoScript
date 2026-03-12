@@ -17,6 +17,7 @@ from typing import Dict, List, Optional, Any
 # Import fake module before import pywebio to avoid importing unnecessary module PIL
 from module.webui.fake_pil_module import import_fake_pil_module
 from module.statistics.azurstats import AzurStats
+from module.os.simulator import OSSimulator
 
 import_fake_pil_module()
 
@@ -219,6 +220,8 @@ class AlasGUI(Frame):
         self._announcement_result = None
         self._announcement_fetching = False
         self._announcement_force = False
+        self.simulator = OSSimulator()
+        self._simulator_logger_pm = None
 
 
 
@@ -1118,10 +1121,107 @@ class AlasGUI(Frame):
                 content=[put_text(task_help).style("font-size: 1rem")],
             )
 
+        if task == 'OpsiSimulator':
+            with use_scope("groups"):
+                self._os_simulator()
+
         config = self.alas_config.read_file(self.alas_name)
         for group, arg_dict in deep_iter(self.ALAS_ARGS[task], depth=1):
             if self.set_group(group, arg_dict, config, task):
                 self.set_navigator(group)
+                
+    def _os_simulator(self):
+        self.simulator.set_config(self.alas_config)
+
+        if self._simulator_logger_pm is None:
+            class SimulatorLogger:
+                def __init__(self):
+                    self.renderables = []
+                    self.renderables_max_length = 2000
+                    self.renderables_reduce_length = 1000
+            self._simulator_logger_pm = SimulatorLogger()
+
+        pm = self._simulator_logger_pm
+        import logging
+        class ListHandler(logging.Handler):
+            def emit(self, record):
+                msg = self.format(record)
+                pm.renderables.append(msg + '\n')
+                if len(pm.renderables) > pm.renderables_max_length:
+                    del pm.renderables[:pm.renderables_reduce_length]
+
+        # Remove existing handlers to avoid duplication on page refresh
+        for h in self.simulator.logger.handlers[:]:
+            if getattr(h, 'is_webui_simulator_handler', False):
+                self.simulator.logger.removeHandler(h)
+
+        handler = ListHandler()
+        handler.setFormatter(logging.Formatter(
+            fmt='%(asctime)s.%(msecs)03d | %(levelname)s | %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        ))
+        handler.is_webui_simulator_handler = True
+        self.simulator.logger.addHandler(handler)
+
+        put_scope(
+            "scheduler-bar",
+            [
+                put_text(t("Task.OpsiSimulator.name")).style(
+                    "font-size: 1.25rem; margin: auto .5rem auto;"
+                ),
+                put_scope("scheduler_btn"),
+            ]
+        )
+        put_scope(
+            "logs",
+            [
+                put_scope(
+                    "log-bar",
+                    [
+                        put_text(t("Gui.Overview.Log")).style(
+                            "font-size: 1.25rem; margin: auto .5rem auto;"
+                        ),
+                        put_scope(
+                            "log-bar-btns",
+                            [
+                                put_scope("log_scroll_btn"),
+                            ],
+                        ),
+                    ],
+                ),
+                put_scope("log-container", [
+                    put_scope("log", [put_html("")])
+                ])
+            ]
+        )
+
+        switch_scheduler = BinarySwitchButton(
+            label_on=t("Gui.Button.Stop"),
+            label_off=t("Gui.Button.Start"),
+            onclick_on=self.simulator.interrupt,
+            onclick_off=self.simulator.start,
+            get_state=lambda: self.simulator.is_running,
+            color_on="off",
+            color_off="on",
+            scope="scheduler_btn",
+        )
+        self.task_handler.add(switch_scheduler.g(), 1, True)
+
+        log = RichLog("log")
+        log.console.width = log.get_width()
+        switch_log_scroll = BinarySwitchButton(
+            label_on=t("Gui.Button.ScrollON"),
+            label_off=t("Gui.Button.ScrollOFF"),
+            onclick_on=lambda: log.set_scroll(False),
+            onclick_off=lambda: log.set_scroll(True),
+            get_state=lambda: log.keep_bottom,
+            color_on="on",
+            color_off="off",
+            scope="log_scroll_btn",
+        )
+        self.task_handler.add(switch_log_scroll.g(), 1, True)
+
+        self.task_handler.add(log.put_log(pm), 0.25, True)
 
     @use_scope("groups")
 
