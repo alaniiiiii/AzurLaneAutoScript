@@ -4884,8 +4884,8 @@
       "help": "理论上越大模拟越精准但是更消耗性能"
     },
     "InitialAp": {
-      "name": "OpsiSimulatorParameters.InitialAp.name",
-      "help": "OpsiSimulatorParameters.InitialAp.help"
+      "name": "初始行动力",
+      "help": "填0为自动获取，不建议修改"
     },
     "InitialCoin": {
       "name": "初始黄币",
