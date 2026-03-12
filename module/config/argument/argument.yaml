@@ -1299,3 +1299,5 @@ EmulatorManagement:
     validate: [1, 24]
 OpsiSimulatorParameters:
   Samples: 1000
+  InitialAp: 0
+  InitialCoin: 0

@@ -4882,6 +4882,14 @@
     "Samples": {
       "name": "OpsiSimulatorParameters.Samples.name",
       "help": "OpsiSimulatorParameters.Samples.help"
+    },
+    "InitialAp": {
+      "name": "OpsiSimulatorParameters.InitialAp.name",
+      "help": "OpsiSimulatorParameters.InitialAp.help"
+    },
+    "InitialCoin": {
+      "name": "OpsiSimulatorParameters.InitialCoin.name",
+      "help": "OpsiSimulatorParameters.InitialCoin.help"
     }
   },
   "Storage": {

@@ -73,19 +73,27 @@ class OSSimulator:
 
         self.daily_reward = 6520
         self.logger.info(f'每日任务获得黄币: {self.daily_reward}')
+        
+        self.stronghold_reward = 40000
+        self.logger.info(f'每周要塞期望获得黄币: {self.stronghold_reward}')
     
     def get_paras(self):
         self.config.load()
+        
         self.samples = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.Samples')
         self.logger.info(f'样本数: {self.samples}')
         self.meow_hazard_level = 5
         self.logger.info(f'短猫侵蚀等级（目前只支持侵蚀5）: {self.meow_hazard_level}')
         
         log_res = LogRes(self.config)
-        ap = log_res.group('ActionPoint')
-        ap = ap['Total'] if ap and 'Total' in ap else 0
-        coin = log_res.group('YellowCoin')
-        coin = coin['Value'] if coin and 'Value' in coin else 0
+        ap = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.InitialAp')
+        if not ap:
+            ap = log_res.group('ActionPoint')
+            ap = ap['Total'] if ap and 'Total' in ap else 0
+        coin = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.InitialCoin')
+        if not coin:
+            coin = log_res.group('YellowCoin')
+            coin = coin['Value'] if coin and 'Value' in coin else 0
 
         self.initial_state = np.array([
             np.ones(self.samples) * ap,    # ap
@@ -127,6 +135,9 @@ class OSSimulator:
     
     def _run(self):
         try:
+            if not self.config:
+                raise ValueError('缺少配置')
+            
             self.get_paras()
 
             if self.meow_hazard_level not in self.coin_expectation:
@@ -266,7 +277,8 @@ class OSSimulator:
 
                 cross_week_mask = (sim_days - self.days_until_next_monday) % 7 == 0
                 if np.any(cross_week_mask & cross_day_mask):
-                    now_state[self.AP][cross_day_mask & cross_week_mask] += 1000
+                    now_state[self.AP][cross_day_mask & cross_week_mask] += 800
+                    now_state[self.COIN][cross_day_mask & cross_week_mask] += self.stronghold_reward
             
             # 5. 标记完成状态
             now_state[self.STATUS][now_state[self.USED_TIME] >= total_time] = self.STATUS_DONE
