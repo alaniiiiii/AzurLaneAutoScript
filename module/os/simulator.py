@@ -82,6 +82,12 @@ class OSSimulator:
         
         self.samples = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.Samples')
         self.logger.info(f'样本数: {self.samples}')
+        
+        self.total_time = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.TotalTime')
+        if not self.total_time:
+            self.total_time = self._get_remaining_seconds()
+        self.logger.info(f'总模拟时间 (s): {self.total_time}')
+        
         self.meow_hazard_level = 5
         self.logger.info(f'短猫侵蚀等级（目前只支持侵蚀5）: {self.meow_hazard_level}')
         
@@ -236,8 +242,7 @@ class OSSimulator:
     def simulate(self):
         if not hasattr(self, 'initial_state'):
             self.get_paras()
-        
-        total_time = self._get_remaining_seconds()
+            
         now_state = np.copy(self.initial_state)
         
         while np.any(now_state[self.STATUS] != self.STATUS_DONE):
@@ -248,13 +253,16 @@ class OSSimulator:
             # 1. 计算状态转移
             is_cl1 = now_state[self.STATUS] == self.STATUS_CL1
             is_meow = now_state[self.STATUS] == self.STATUS_MEOW
+            is_crashed = now_state[self.STATUS] == self.STATUS_CRASHED
             
             # 从侵蚀1切换到短猫
             to_meow_mask = is_cl1 & (now_state[self.COIN] < self.coin_preserve)
             # 从短猫切换到侵蚀1
             to_cl1_mask = is_meow & (now_state[self.HAS_EARNED_COIN] >= self.coin_threshold)
-            # 坠机拥有最高优先级
-            to_crashed_mask = (now_state[self.COIN] < self.coin_preserve) & (now_state[self.AP] < self.ap_preserve)
+            # 从坠机切换到侵蚀1
+            to_cl1_mask |= is_crashed & (now_state[self.AP] >= self.ap_preserve)
+            # 从侵蚀1或者短猫切换到坠机
+            to_crashed_mask = (is_cl1 | is_meow) & (now_state[self.AP] < self.ap_preserve)
             
             # 2. 应用状态转移
             now_state[self.STATUS][to_meow_mask] = self.STATUS_MEOW
@@ -281,7 +289,7 @@ class OSSimulator:
                     now_state[self.COIN][cross_day_mask & cross_week_mask] += self.stronghold_reward
             
             # 5. 标记完成状态
-            now_state[self.STATUS][now_state[self.USED_TIME] >= total_time] = self.STATUS_DONE
+            now_state[self.STATUS][now_state[self.USED_TIME] >= self.total_time] = self.STATUS_DONE
             
         return now_state
     
@@ -292,3 +300,13 @@ class OSSimulator:
         self.logger.info(f'[模拟结果] 短猫次数: {self.result_meow_count}')
         self.result_crashed_probability = np.average(result[self.HAS_CRASHED])
         self.logger.info(f'[模拟结果] 坠机概率: {self.result_crashed_probability}')
+        self.result_cl1_total_time = self.result_cl1_count * self.cl1_time
+        self.logger.info(f'[模拟结果] 侵蚀一总时长 (h): {self.result_cl1_total_time / 3600}')
+        self.result_meow_total_time = self.result_meow_count * self.meow_time
+        self.logger.info(f'[模拟结果] 短猫总时长 (h): {self.result_meow_total_time / 3600}')
+        self.result_crashed_total_time = self.total_time - self.result_cl1_total_time - self.result_meow_total_time
+        self.logger.info(f'[模拟结果] 坠机总时长 (h): {self.result_crashed_total_time / 3600}')
+        self.result_ap = np.average(result[self.AP])
+        self.logger.info(f'[模拟结果] 最终行动力: {self.result_ap}')
+        self.result_coin = np.average(result[self.COIN])
+        self.logger.info(f'[模拟结果] 最终黄币: {self.result_coin}')
