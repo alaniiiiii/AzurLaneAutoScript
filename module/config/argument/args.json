@@ -13610,6 +13610,14 @@
       "Samples": {
         "type": "input",
         "value": 1000
+      },
+      "IniTialAp": {
+        "type": "input",
+        "value": 0
+      },
+      "InitialCoin": {
+        "type": "input",
+        "value": 0
       }
     },
     "Storage": {

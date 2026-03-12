@@ -2585,7 +2585,9 @@
   },
   "OpsiSimulator": {
     "OpsiSimulatorParameters": {
-      "Samples": 1000
+      "Samples": 1000,
+      "IniTialAp": 0,
+      "InitialCoin": 0
     },
     "Storage": {
       "Storage": {}
