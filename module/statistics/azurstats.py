@@ -75,10 +75,7 @@ class DropImage:
         return len(self.images)
 
     def __bool__(self):
-        # Uncomment these if stats service re-run in the future
-        # return self.save or self.upload
-
-        return self.save
+        return self.save or self.upload
 
     def __enter__(self):
         return self
