@@ -4887,6 +4887,10 @@
       "name": "OpsiSimulatorParameters.TotalTime.name",
       "help": "OpsiSimulatorParameters.TotalTime.help"
     },
+    "TimeUseRatio": {
+      "name": "OpsiSimulatorParameters.TimeUseRatio.name",
+      "help": "OpsiSimulatorParameters.TimeUseRatio.help"
+    },
     "InitialAp": {
       "name": "OpsiSimulatorParameters.InitialAp.name",
       "help": "OpsiSimulatorParameters.InitialAp.help"

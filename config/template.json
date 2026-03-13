@@ -2587,6 +2587,7 @@
     "OpsiSimulatorParameters": {
       "Samples": 1000,
       "TotalTime": 0,
+      "TimeUseRatio": 0.8,
       "InitialAp": 0,
       "InitialCoin": 0
     },
