@@ -1300,5 +1300,8 @@ EmulatorManagement:
 OpsiSimulatorParameters:
   Samples: 1000
   TotalTime: 0
+  TimeUseRatio:
+    value: 0.8
+    validate: [0, 1]
   InitialAp: 0
   InitialCoin: 0

@@ -13615,6 +13615,14 @@
         "type": "input",
         "value": 0
       },
+      "TimeUseRatio": {
+        "type": "input",
+        "value": 0.8,
+        "validate": [
+          0,
+          1
+        ]
+      },
       "InitialAp": {
         "type": "input",
         "value": 0

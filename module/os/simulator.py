@@ -88,6 +88,9 @@ class OSSimulator:
             self.total_time = self._get_remaining_seconds()
         self.logger.info(f'总模拟时间 (s): {self.total_time}')
         
+        self.time_use_ratio = self.config.cross_get('OpsiSimulator.OpsiSimulatorParameters.TimeUseRatio')
+        self.logger.info(f'时间利用率: {self.time_use_ratio}')
+        
         self.meow_hazard_level = 5
         self.logger.info(f'短猫侵蚀等级（目前只支持侵蚀5）: {self.meow_hazard_level}')
         
@@ -129,6 +132,10 @@ class OSSimulator:
         self.logger.info(f'每轮短猫时间: {self.meow_time}')
         self.cl1_time = get_ship_exp_stats(self.instance_name).get_average_round_time()
         self.logger.info(f'每轮侵蚀1时间: {self.cl1_time}')
+        
+        # 修正后的单轮时间：包含了因“时间利用率”不足而产生的空闲时间，用于正确计算AP的自然恢复
+        self.modified_meow_time = self.meow_time / self.time_use_ratio
+        self.modified_cl1_time = self.cl1_time / self.time_use_ratio
 
         self.days_until_next_monday = self._get_days_until_next_monday()
         self.logger.info(f'距离下周一还有多少天: {self.days_until_next_monday}')
@@ -215,8 +222,8 @@ class OSSimulator:
         state[self.AP][mask] -= self.AP_COSTS[1]
         state[self.COIN][mask] += self.coin_expectation[1]
         
-        state[self.AP][mask] += self.AP_RECOVER * self.cl1_time
-        state[self.USED_TIME][mask] += self.cl1_time
+        state[self.AP][mask] += self.AP_RECOVER * self.modified_cl1_time
+        state[self.USED_TIME][mask] += self.modified_cl1_time
         
         self._handle_akashi(state, mask)
     
@@ -227,8 +234,8 @@ class OSSimulator:
         state[self.COIN][mask] += self.coin_expectation[self.meow_hazard_level]
         state[self.HAS_EARNED_COIN][mask] += self.coin_expectation[self.meow_hazard_level]
         
-        state[self.AP][mask] += self.AP_RECOVER * self.meow_time
-        state[self.USED_TIME][mask] += self.meow_time
+        state[self.AP][mask] += self.AP_RECOVER * self.modified_meow_time
+        state[self.USED_TIME][mask] += self.modified_meow_time
         
         self._handle_akashi(state, mask)
     
@@ -304,8 +311,6 @@ class OSSimulator:
         self.logger.info(f'[模拟结果] 侵蚀一总时长 (h): {self.result_cl1_total_time / 3600}')
         self.result_meow_total_time = self.result_meow_count * self.meow_time
         self.logger.info(f'[模拟结果] 短猫总时长 (h): {self.result_meow_total_time / 3600}')
-        self.result_crashed_total_time = self.total_time - self.result_cl1_total_time - self.result_meow_total_time
-        self.logger.info(f'[模拟结果] 坠机总时长 (h): {self.result_crashed_total_time / 3600}')
         self.result_ap = np.average(result[self.AP])
         self.logger.info(f'[模拟结果] 最终行动力: {self.result_ap}')
         self.result_coin = np.average(result[self.COIN])
