@@ -1077,10 +1077,11 @@
     "Fleet1Mode": {
       "name": "Fleet 1 Auto Mode",
       "help": "",
-      "combat_auto": "Auto Combat",
-      "combat_manual": "Manual Combat",
-      "stand_still_in_the_middle": "Stand Still in Center",
-      "hide_in_bottom_left": "Hide in Bottom Left"
+      "combat_auto": "combat_auto",
+      "combat_manual": "combat_manual",
+      "stand_still_in_the_middle": "stand_still_in_the_middle",
+      "hide_in_bottom_left": "hide_in_bottom_left",
+      "hide_in_upper_left": "hide_in_upper_left"
     },
     "Fleet1Step": {
       "name": "Fleet 1 Step Size",
@@ -1111,10 +1112,11 @@
     "Fleet2Mode": {
       "name": "Fleet 2 Auto Mode",
       "help": "",
-      "combat_auto": "Auto Combat",
-      "combat_manual": "Manual Combat",
-      "stand_still_in_the_middle": "Stand Still in Center",
-      "hide_in_bottom_left": "Hide in Bottom Left"
+      "combat_auto": "combat_auto",
+      "combat_manual": "combat_manual",
+      "stand_still_in_the_middle": "stand_still_in_the_middle",
+      "hide_in_bottom_left": "hide_in_bottom_left",
+      "hide_in_upper_left": "hide_in_upper_left"
     },
     "Fleet2Step": {
       "name": "Fleet 2 Step Size",
