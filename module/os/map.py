@@ -1588,7 +1588,7 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             logger.info('[移动装置] 等待移动稳定...')
             with self.config.temporary(STORY_ALLOW_SKIP=False, OS_SIREN_DEVICE_USAGE='use_until_destroyed'):
                 result = self.wait_until_walk_stable(
-                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
+                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(3, count=4))
             logger.info(f'[移动装置] 移动完成,结果: {result}')
             
             if getattr(self, 'is_siren_device_confirmed', False):
@@ -1622,7 +1622,7 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             self.device.click(grid)
             with self.config.temporary(STORY_ALLOW_SKIP=False):
                 result = self.wait_until_walk_stable(
-                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
+                    drop=drop, walk_out_of_step=False, confirm_timer=Timer(3, count=4))
             if 'event' in result:
                 self._solved_map_event.add('is_logging_tower')
                 return True
