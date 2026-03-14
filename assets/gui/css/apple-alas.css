@@ -1160,14 +1160,6 @@ details[open]>summary::after {
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03) !important;
 }
 
-/* ================= Scheduler Bar ================= */
-/* 调度栏：重置为透明 */
-#pywebio-scope-scheduler-bar {
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
-	padding: 0 !important;
-}
 
 /* 修复特定按钮的颜色样式 */
 button[style*="--menu-Overview--"] {
