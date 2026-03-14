@@ -1584,36 +1584,34 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             # 重置标志位
             self.is_siren_device_confirmed = False
             
-            # wait_until_walk_stable 会调用 handle_story_skip 处理选项。
-            # 将 use_until_destroyed 作用域覆盖到整个原海域处理链，
-            # 避免后续自律接管未关闭的剧情框时退回默认 never，误点第 3 个选项离开。
+            # wait_until_walk_stable 会调用 handle_story_skip 处理选项
             logger.info('[移动装置] 等待移动稳定...')
             with self.config.temporary(STORY_ALLOW_SKIP=False, OS_SIREN_DEVICE_USAGE='use_until_destroyed'):
                 result = self.wait_until_walk_stable(
                     drop=drop, walk_out_of_step=False, confirm_timer=Timer(1.5, count=4))
-                logger.info(f'[移动装置] 移动完成,结果: {result}')
+            logger.info(f'[移动装置] 移动完成,结果: {result}')
+            
+            if getattr(self, 'is_siren_device_confirmed', False):
+                # 保存标志状态，因为二次重扫可能会重置它
+                siren_confirmed = True
+                
+                # 执行自律寻敌
+                logger.info('[装置处理] 执行自律寻敌')
+                self.os_auto_search_run(drop=drop)
 
-                if getattr(self, 'is_siren_device_confirmed', False):
-                    # 保存标志状态，因为二次重扫可能会重置它
-                    siren_confirmed = True
+                # 先标记为已处理，防止二次重扫时再次处理塞壬装置
+                self._solved_map_event.add('is_scanning_device')
 
-                    # 执行自律寻敌
-                    logger.info('[装置处理] 执行自律寻敌')
-                    self.os_auto_search_run(drop=drop)
-
-                    # 先标记为已处理，防止二次重扫时再次处理塞壬装置
-                    self._solved_map_event.add('is_scanning_device')
-
-                    # 二次重扫，防止出现意外情况导致装置处理失败
-                    logger.info('[装置处理] 执行二次重扫')
-                    self.map_rescan_current(drop=drop)
-
-                    # 使用保存的标志状态，而不是重新检查（因为二次重扫可能会重置它）
-                    if siren_confirmed:
-                        logger.info('[装置处理] 已确认为塞壬研究装置，检查是否需要执行Bug利用')
-                        self._handle_siren_bug_reinteract(drop=drop)
-                    else:
-                        logger.info('[装置处理] 未确认为塞壬研究装置，跳过Bug利用')
+                # 二次重扫，防止出现意外情况导致装置处理失败
+                logger.info('[装置处理] 执行二次重扫')
+                self.map_rescan_current(drop=drop)
+                
+                # 使用保存的标志状态，而不是重新检查（因为二次重扫可能会重置它）
+                if siren_confirmed:
+                    logger.info('[装置处理] 已确认为塞壬研究装置，检查是否需要执行Bug利用')
+                    self._handle_siren_bug_reinteract(drop=drop)
+                else:
+                    logger.info('[装置处理] 未确认为塞壬研究装置，跳过Bug利用')
             
             return True
 
