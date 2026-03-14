@@ -2519,6 +2519,29 @@ class AlasGUI(Frame):
         self.task_handler.add(self.set_aside_status, 2)
         self.task_handler.add(visibility_state_switch.g(), 15)
         self.task_handler.add(update_switch.g(), 1)
+
+        def handle_update_click(_):
+            close_popup()
+            goto_update()
+
+        def update_popup_checker():
+            th = yield
+            th._task.delay = 1
+            yield
+            while True:
+                if updater.state == 1:
+                    with use_scope("ROOT"):
+                        popup(t("Gui.Toast.ClickToUpdate"), [
+                            put_html('<h1 style="color: red; font-size: 3em; text-align: center; margin: 20px 0;">幸福倒计时</h1>'),
+                            put_html('<h2 style="text-align: center;">发现新版本，请立即更新以获取最新功能和修复！</h2>'),
+                            put_buttons([{"label": "立即更新", "value": "update", "color": "danger"}], onclick=[handle_update_click]).style("text-align: center; margin-top: 30px; transform: scale(1.5); padding-bottom: 20px;")
+                        ], size="large", implicit_close=True)
+                    th._task.delay = 30
+                else:
+                    th._task.delay = 2
+                yield
+
+        self.task_handler.add(update_popup_checker(), delay=5)
         
         # 公告检查功能（非阻塞）
         def announcement_checker():
